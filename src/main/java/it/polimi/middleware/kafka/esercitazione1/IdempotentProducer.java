@@ -36,7 +36,7 @@ public class IdempotentProducer {
 
         for (int i = 0; i < numMessages; i++) {
             final String topic = topics.get(r.nextInt(topics.size()));
-            final String key = "Key" + r.nextInt(1000)%10;
+            final String key = "Key" + i;//r.nextInt(1000)%10;
             final String value = "VaLoRe" + i;
             System.out.println(
                     "Topic: " + topic +

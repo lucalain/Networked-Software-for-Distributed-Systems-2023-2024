@@ -12,15 +12,14 @@ import org.json.JSONObject;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class C2 {
+public class C2Helper {
     private static final String defaultConsumerGroupId = "groupA";
     private static final String defaultInputTopic = "topicA";
     private static final String defaultOutputTopic = "topicB";
 
     private static final String serverAddr = "localhost:9092";
-    private static final String producerTransactionalId = "forwarderTransactionalId";
+    private static final String producerTransactionalId = "forwarderTransactionalId2";
 
     public static void main(String[] args) {
         // If there are arguments, use the first as group, the second as input topic, the third as output topic.
@@ -77,7 +76,7 @@ public class C2 {
                 //String messageToSend = record.value().replaceAll("[A-Z]", "");
                 JSONObject jsonObject = new JSONObject(mapKeys);
                 String messageToSend = jsonObject.toString();
-               // System.out.println(messageToSend);
+                //System.out.println(messageToSend);
                 producer.send(new ProducerRecord<>(outputTopic, record.key(), messageToSend));
             }
 
