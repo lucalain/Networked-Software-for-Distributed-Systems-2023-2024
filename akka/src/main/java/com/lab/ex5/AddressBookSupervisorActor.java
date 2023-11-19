@@ -1,4 +1,4 @@
-package com.faultTolerance.counter;
+package com.lab.ex5;
 
 import akka.actor.AbstractActor;
 import akka.actor.OneForOneStrategy;
@@ -7,7 +7,7 @@ import akka.actor.SupervisorStrategy;
 import akka.japi.pf.DeciderBuilder;
 import java.time.Duration;
 
-public class CounterSupervisorActor extends AbstractActor {
+public class AddressBookSupervisorActor extends AbstractActor {
 
 	 // #strategy
     private static SupervisorStrategy strategy =
@@ -22,7 +22,7 @@ public class CounterSupervisorActor extends AbstractActor {
       return strategy;
     }
 
-	public CounterSupervisorActor() {
+	public AddressBookSupervisorActor() {
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class CounterSupervisorActor extends AbstractActor {
 	}
 
 	static Props props() {
-		return Props.create(CounterSupervisorActor.class);
+		return Props.create(AddressBookSupervisorActor.class);
 	}
 
 }

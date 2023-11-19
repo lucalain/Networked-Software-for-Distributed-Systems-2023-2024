@@ -30,11 +30,11 @@ public class CounterSupervisor {
 			counter = (ActorRef) waitingForCounter.result(timeout, null);
 
 			counter.tell(new DataMessage(NORMAL_OP), ActorRef.noSender());
-
-			for (int i = 0; i < FAULTS; i++)
-				counter.tell(new DataMessage(FAULT_OP), ActorRef.noSender());
-
-			counter.tell(new DataMessage(NORMAL_OP), ActorRef.noSender());
+			
+			for (int i = 0; i < 100; i++){
+				if(i%10==0)counter.tell(new DataMessage(FAULT_OP), ActorRef.noSender());
+				counter.tell(new DataMessage(NORMAL_OP), ActorRef.noSender());
+			}
 
 			sys.terminate();
 
