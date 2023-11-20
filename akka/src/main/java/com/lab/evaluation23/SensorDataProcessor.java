@@ -2,6 +2,7 @@ package com.lab.evaluation23;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import com.lab.evaluation22.solution.BrokerActor;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,10 @@ public class SensorDataProcessor {
 		}
 
 		// Create dispatcher
-		// final ActorRef dispatcher = ....
+		final ActorRef dispatcher = sys.actorOf(DispatcherActor.props(), "dispatcher");
+		for (ActorRef s : sensors) {
+			s.tell(new ConfigMsg(dispatcher), ActorRef.noSender());
+		}
 
 		// Waiting until system is ready
 		try {
@@ -52,7 +56,7 @@ public class SensorDataProcessor {
 		}
 
 		// Re-configure dispatcher to use Round Robin
-		// ...
+		dispatcher.tell(new DispatchLogicMsg(DispatchLogicMsg.ROUND_ROBIN), ActorRef.noSender());
 		
 		// Waiting for dispatcher reconfiguration
 		try {
@@ -72,8 +76,9 @@ public class SensorDataProcessor {
 		// A new (faulty) sensor joins the system
 		ActorRef faultySensor = sys.actorOf(TemperatureSensorFaultyActor.props(), "tFaulty");
 		sensors.add(0, faultySensor);
-		
-		// ...
+
+		faultySensor.tell(new ConfigMsg(dispatcher), ActorRef.noSender());
+
 		
 		// Wait until system is ready again
 		try {

@@ -16,6 +16,7 @@ public class TemperatureSensorActor extends AbstractActor {
 	public Receive createReceive() {
 		return receiveBuilder()
 				.match(GenerateMsg.class, this::onGenerate)
+				.match(ConfigMsg.class, this::onConfig)
 				.build();
 	}
 
@@ -23,6 +24,10 @@ public class TemperatureSensorActor extends AbstractActor {
 		System.out.println("TEMPERATURE SENSOR: Sensing temperature!");
 		int temp = ThreadLocalRandom.current().nextInt(MIN_TEMP, MAX_TEMP + 1);
 		dispatcher.tell(new TemperatureMsg(temp,self()), self());
+	}
+	private void onConfig(ConfigMsg msg) {
+		System.out.println("DISPATCHER ON TEMPERATURE SENSOR configured");
+		this.dispatcher = msg.getDispatcher();
 	}
 
 	static Props props() {
