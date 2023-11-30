@@ -15,6 +15,6 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
-
+spark-3.5.0-bin-hadoop3/
 
 node_modules/
