@@ -1,8 +1,13 @@
 package it.polimi.middleware.spark.batch.wordcount;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaDoubleRDD;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import scala.Tuple2;
+
+import java.util.Arrays;
 
 public class WordCountModified {
 
@@ -14,19 +19,31 @@ public class WordCountModified {
         final JavaSparkContext sc = new JavaSparkContext(conf);
         sc.setLogLevel("ERROR");
 
-        final JavaRDD<String> lines = sc.textFile(filePath + "files/wordcount/in.txt");
+        final JavaRDD<String> lines = sc.textFile(filePath + "/files/wordcount/in.txt");
+
+        //final JavaRDD<String> words = lines.flatMap(line -> Arrays.asList(line.split(" ")).iterator());
+        //final JavaPairRDD<String, Integer> pairs = words.mapToPair(s -> new Tuple2<>(s, 1));
 
         // Q1. For each character, compute the number of words starting with that character
 
-        // TODO
-
+        /*
+        final JavaRDD<String> words = lines.flatMap(line -> Arrays.asList(line.split(" ")).iterator());
+        final JavaPairRDD<Character, Integer> pairs = words.mapToPair(s -> new Tuple2<>(s.toLowerCase().charAt(0), 1));
+        final JavaPairRDD<Character, Integer> counts = pairs.reduceByKey((a, b) -> a + b);
+        System.out.println(counts.collect());
+*/
         // Q2. For each character, compute the number of lines starting with that character
-
-        // TODO
+/*
+        final JavaPairRDD<Character, Integer> pairs = lines.mapToPair(s -> new Tuple2<>(s.toLowerCase().charAt(0), 1));
+        final JavaPairRDD<Character, Integer> counts = pairs.reduceByKey((a, b) -> a + b);
+        System.out.println(counts.collect());
+*/
 
         // Q3. Compute the average number of characters in each line
 
-        // TODO
+        final JavaDoubleRDD lineLength = lines.mapToDouble(String::length);
+        final Double mean = lineLength.mean();
+        System.out.println(mean);
 
         sc.close();
     }

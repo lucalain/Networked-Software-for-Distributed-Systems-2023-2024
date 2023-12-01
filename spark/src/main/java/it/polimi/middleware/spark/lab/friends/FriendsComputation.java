@@ -36,15 +36,48 @@ public class FriendsComputation {
         fields.add(DataTypes.createStructField("friend", DataTypes.StringType, false));
         final StructType schema = DataTypes.createStructType(fields);
 
-        final Dataset<Row> input = spark
+        Dataset<Row> input = spark
                 .read()
                 .option("header", "false")
                 .option("delimiter", ",")
                 .schema(schema)
                 .csv(filePath + "files/friends/friends.csv");
 
-        // TODO
+        Dataset<Row> oldInput = input;
+        input.cache();
+        Dataset<Row> input2;
+        Dataset<Row> inputJoin;
 
+        long numberOfRows = 0;
+
+        while (numberOfRows != input.count())
+        {
+            System.out.println("aaa");
+            numberOfRows = input.count();
+            input2 = input.select(input.col("person").as("friend1"), input.col("friend").as("friend2"));
+
+            input2.cache();
+
+            inputJoin = input
+                .join(input2, input2.col("friend1")
+                        .equalTo(input.col("friend")), "inner")
+                .select(input.col("person"), input2.col("friend2").as("friend"));
+
+            input2.unpersist();
+
+            inputJoin.cache();
+
+            input = inputJoin.unionByName(input).distinct();
+
+            inputJoin.unpersist();
+            input.cache();
+
+            oldInput.unpersist();
+            oldInput = input;
+
+        }
+        input.orderBy("person", "friend").show();
+        input.unpersist();
         spark.close();
     }
 }

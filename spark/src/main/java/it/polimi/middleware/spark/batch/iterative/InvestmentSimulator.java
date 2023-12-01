@@ -3,6 +3,7 @@ package it.polimi.middleware.spark.batch.iterative;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import scala.Tuple2;
 
 /**
  * Start from a dataset of investments. Each element is a Tuple2(amount_owned, interest_rate).
@@ -23,13 +24,48 @@ public class InvestmentSimulator {
 
         final JavaRDD<String> textFile = sc.textFile(filePath + "files/iterative/investment.txt");
 
-        int iteration = 0;
-        double sum = 0;
+        // Transforms each line into a tuple (amount_owned, investment_rate)
+        JavaRDD<Tuple2<Double, Double>> investments = textFile.map(w -> {
+            String[] values = w.split(" ");
+            double amountOwned = Double.parseDouble(values[0]);
+            double investmentRate = Double.parseDouble(values[1]);
+            return new Tuple2<>(amountOwned, investmentRate);
+        });
 
-        // TODO
+        JavaRDD<Tuple2<Double, Double>> oldInvestments = investments;
+        investments.cache();
+
+        int iteration = 0;
+        double sum = sumAmount(investments);;
+
+        while(sum < threshold){
+            iteration++;
+            System.out.println("Iteration: " + (iteration));
+            investments = investments.map(i -> {
+
+                System.out.println("eccomi--------------");
+                return new Tuple2<>(i._1*(1+i._2), i._2);
+                }
+            );
+
+            investments.cache();
+
+            sum = sumAmount(investments);
+
+            oldInvestments.unpersist();
+            oldInvestments = investments;
+
+
+        }
 
         System.out.println("Sum: " + sum + " after " + iteration + " iterations");
         sc.close();
+    }
+
+    private static final double sumAmount(JavaRDD<Tuple2<Double, Double>> investments) {
+        return investments
+                .mapToDouble(a -> a._1)
+                .sum();
     }
 
 }
