@@ -1,6 +1,7 @@
 package it.polimi.middleware.spark.lab.enrichment;
 
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.streaming.StreamingQuery;
@@ -8,8 +9,12 @@ import org.apache.spark.sql.streaming.StreamingQueryException;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import org.apache.spark.streaming.Durations;
+import org.apache.spark.streaming.api.java.JavaPairDStream;
+import scala.Tuple2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -19,10 +24,10 @@ import static org.apache.spark.sql.functions.window;
 /**
  * This code snippet exemplifies a typical scenario in event processing: merging
  * incoming events with some background knowledge.
- *
+ * <p>
  * A static dataset (read from a file) classifies products (associates products to the
  * class they belong to).  A stream of products is received from a socket.
- *
+ * <p>
  * We want to count the number of products of each class in the stream. To do so, we
  * need to integrate static knowledge (product classification) and streaming data
  * (occurrences of products in the stream).
@@ -59,7 +64,20 @@ public class EventEnrichment {
                 .schema(productClassificationSchema)
                 .csv(filePath + "files/enrichment/product_classification.csv");
 
-        // TODO
+        final StreamingQuery query = inStream
+                .join(productsClassification, inStream.col("value").equalTo(productsClassification.col("product")))
+                .groupBy(
+                        col("classification"),
+                        window(col("timestamp"), "30 seconds", "10 seconds"))
+                .count().writeStream()
+                .outputMode("update").format("console")
+                .start();
+
+        try {
+            query.awaitTermination();
+        } catch (final StreamingQueryException e) {
+            e.printStackTrace();
+        }
 
         spark.close();
     }
