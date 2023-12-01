@@ -1,4 +1,4 @@
-package it.polimi.nsds.spark.lab.enrichment;
+package it.polimi.middleware.spark.lab.enrichment;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;

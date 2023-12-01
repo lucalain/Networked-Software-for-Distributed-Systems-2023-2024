@@ -1,4 +1,4 @@
-package it.polimi.nsds.spark.lab.cities;
+package it.polimi.middleware.spark.lab.cities;
 
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.Dataset;
