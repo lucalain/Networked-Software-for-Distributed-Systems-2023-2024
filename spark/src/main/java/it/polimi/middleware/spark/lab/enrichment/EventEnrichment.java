@@ -64,6 +64,11 @@ public class EventEnrichment {
                 .schema(productClassificationSchema)
                 .csv(filePath + "files/enrichment/product_classification.csv");
 
+        /*
+        final StreamingQuery query = inStream.writeStream()
+                .outputMode("update").format("console")
+                .start();*/
+
         final StreamingQuery query = inStream
                 .join(productsClassification, inStream.col("value").equalTo(productsClassification.col("product")))
                 .groupBy(
@@ -71,6 +76,7 @@ public class EventEnrichment {
                         window(col("timestamp"), "30 seconds", "10 seconds"))
                 .count().writeStream()
                 .outputMode("update").format("console")
+                .option("truncate", false)
                 .start();
 
         try {

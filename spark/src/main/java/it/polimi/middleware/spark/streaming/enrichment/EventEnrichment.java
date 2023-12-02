@@ -3,6 +3,8 @@ package it.polimi.middleware.spark.streaming.enrichment;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.streaming.StreamingQuery;
+import org.apache.spark.sql.streaming.StreamingQueryException;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
@@ -10,6 +12,9 @@ import org.apache.spark.sql.types.StructType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
+
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.window;
 
 /**
  * This code snippet exemplifies a typical scenario in event processing: merging
@@ -25,7 +30,7 @@ import java.util.concurrent.TimeoutException;
 public class EventEnrichment {
     public static void main(String[] args) throws TimeoutException {
         final String master = args.length > 0 ? args[0] : "local[4]";
-        final String socketHost = args.length > 1 ? args[1] : "localhost";
+        final String socketHost = args.length > 1 ? args[1] : "172.26.119.96";
         final int socketPort = args.length > 2 ? Integer.parseInt(args[2]) : 9999;
         final String filePath = args.length > 3 ? args[3] : "./";
 
@@ -59,7 +64,20 @@ public class EventEnrichment {
                 .csv(filePath + "files/enrichment/product_classification.csv");
 
         // Query: count the number of products of each class in the stream
+        final StreamingQuery query = inStreamDF
+                .join(productsClassification, inStreamDF.col("product").equalTo(productsClassification.col("product")))
+                .groupBy(
+                        col("classification"))
+                .count().writeStream()
+                .outputMode("update").format("console")
+                .option("truncate", false)
+                .start();
 
+        try {
+            query.awaitTermination();
+        } catch (final StreamingQueryException e) {
+            e.printStackTrace();
+        }
         // TODO
 
         spark.close();

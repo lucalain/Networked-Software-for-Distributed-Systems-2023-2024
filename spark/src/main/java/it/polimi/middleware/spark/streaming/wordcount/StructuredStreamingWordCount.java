@@ -14,7 +14,7 @@ import org.apache.spark.sql.streaming.StreamingQueryException;
 public class StructuredStreamingWordCount {
     public static void main(String[] args) throws TimeoutException {
         final String master = args.length > 0 ? args[0] : "local[4]";
-        final String socketHost = args.length > 1 ? args[1] : "localhost";
+        final String socketHost = args.length > 1 ? args[1] : "172.26.119.96";
         final int socketPort = args.length > 2 ? Integer.parseInt(args[2]) : 9999;
 
         final SparkSession spark = SparkSession
