@@ -9,10 +9,13 @@ import org.apache.spark.sql.streaming.StreamingQueryException;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import scala.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
+
+import static org.apache.spark.sql.functions.*;
 
 public class Cities {
     public static void main(String[] args) throws TimeoutException {
@@ -51,19 +54,55 @@ public class Cities {
                 .schema(citiesRegionsSchema)
                 .csv(filePath + "files/cities/cities_regions.csv");
 
-        // TODO: add code here if necessary
 
-        final Dataset<Row> q1 = null; // TODO: query Q1
+        final Dataset<Row> qJoin = citiesRegions
+                .join(citiesPopulation, citiesRegions.col("city").equalTo(citiesPopulation.col("city")))
+                .drop(citiesRegions.col("city"));
+
+        qJoin.cache();
+
+
+        final Dataset<Row> q1 = qJoin.groupBy(citiesRegions.col("region"))
+                .sum("population")
+                .select(citiesRegions.col("region"), col("sum(population)").as("population"));
 
         q1.show();
 
-        final Dataset<Row> q2 = null; // TODO: query Q2
+        final Dataset<Row> q2 = qJoin.groupBy(citiesRegions.col("region"))
+                .agg(max("population"), count("city"));
 
         q2.show();
 
         // JavaRDD where each element is an integer and represents the population of a city
         JavaRDD<Integer> population = citiesPopulation.toJavaRDD().map(r -> r.getInt(2));
-        // TODO: add code here to produce the output for query Q3
+
+        JavaRDD<Integer> oldPopulation = population;
+        population.cache();
+
+        long sum = sumPopulation(population);
+
+        int year = 0;
+        while(sum< 100000000){
+
+            year++;
+            population = population.map(r -> {
+                if (r > 1000) {
+                    return (int)( r * 1.01);
+                } else {
+                    return (int) (r * 0.99);
+                }
+            });
+
+            population.cache();
+
+            sum = sumPopulation(population);
+
+            oldPopulation.unpersist();
+            oldPopulation = population;
+
+            System.out.println("Year: " + year + ", total population: " + sum);
+
+        }
 
         // Bookings: the value represents the city of the booking
         final Dataset<Row> bookings = spark
@@ -72,7 +111,14 @@ public class Cities {
                 .option("rowsPerSecond", 100)
                 .load();
 
-        final StreamingQuery q4 = null; // TODO query Q4
+        final StreamingQuery q4 = bookings.join(
+              qJoin, qJoin.col("id").equalTo(bookings.col("value")))
+                .groupBy(window(col("timestamp"), "30 seconds", "5 seconds"), col("region"))
+                .count()
+                .writeStream()
+                .outputMode("update").format("console")
+                .option("truncate", false)
+                .start();
 
         try {
             q4.awaitTermination();
@@ -81,5 +127,9 @@ public class Cities {
         }
 
         spark.close();
+    }
+
+    private static final long sumPopulation(JavaRDD<Integer> investments) {
+        return investments.reduce((a, b) -> a+b);
     }
 }
