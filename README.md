@@ -28,6 +28,24 @@ The objective was to gain hands-on experience with modern middleware technologie
 -   **[IoT (Contiki)](./iot)**  
     An open-source operating system for the Internet of Things, optimized for resource-constrained devices and wireless communication.
     
+### Topics Covered
+
+-   Distributed communication models (message passing, pub/sub)
+    
+-   Actor-based concurrency with **Akka**
+    
+-   Event streaming and data pipelines with **Kafka**
+    
+-   Scalable data analytics using **Apache Spark**
+    
+-   Visual flow-based programming with **Node-RED**
+    
+-   Parallel computing with **MPI**
+    
+-   IoT systems and embedded networking using **Contiki OS**
+    
+-   Evaluation of scalability, fault-tolerance, and responsiveness across platforms
+
 
 ## Repository Structure
 
