@@ -18,3 +18,8 @@ buildNumber.properties
 spark-3.5.0-bin-hadoop3/
 
 node_modules/
+
+
+
+**/.vscode/
+**/.idea/
