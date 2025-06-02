@@ -2,17 +2,47 @@
 
 ## Project Overview
 
-This project is part of the coursework for the "Networked Software for Distributed Systems" class at Politecnico di Milano, held by prof. Luca Mottola and prof. Alessandro Margara during the academic year 2023-2024. The project explores various middleware technologies and frameworks, designed for large-scale network applications and distributed systems.
+This project was developed as part of the **"Networked Software for Distributed Systems"** course at **Politecnico di Milano**, taught by **Prof. Luca Mottola** and **Prof. Alessandro Margara** during the academic year **2023–2024**. 
 
-The key technologies covered in this project include:
+🎓 **Final Grade: 30/30**
 
-- **<a href="../master/akka">AKKA</a>**: A toolkit implementing the actor model for building highly concurrent, fault-tolerant applications, using a message-based, asynchronous communication.
-- **<a href="../master/kafka">KAFKA</a>**: A distributed messaging system designed for high-throughput, low-latency data streaming and real-time event processing.
-- **<a href="../master/spark">SPARK</a>**: A unified analytics engine for large-scale data processing with built-in modules for SQL, streaming, machine learning, and graph processing.
-- **<a href="../master/node_red">NODE_RED</a>**: A flow-based development tool for visual programming, primarily used to connect hardware devices, APIs, and online services.
+The objective was to gain hands-on experience with modern middleware technologies and frameworks used in building scalable, distributed systems and network applications.The project covers a wide range of technologies, each selected to highlight different aspects of distributed computing, from messaging systems to stream processing and IoT.
 
-## The Team
-- #### [Alessandro Mosconi](https://github.com/Alessandro-Mosconi)
-- #### [Luca Lain](https://github.com/lucalain)
-- #### [Martino Piaggi](https://github.com/martinopiaggi)
+### Technologies Used
+
+-   **[Akka](./akka)**  
+    A toolkit for building highly concurrent, distributed, and fault-tolerant applications using the actor model and asynchronous message passing.
+    
+-   **[Kafka](./kafka)**  
+    A distributed event streaming platform designed for high-throughput, low-latency real-time data pipelines and stream processing.
+    
+-   **[Spark](./spark)**  
+    A powerful engine for large-scale data analytics with support for batch processing, streaming, machine learning, and graph computation.
+    
+-   **[Node-RED](./node_red)**  
+    A flow-based development tool for visual programming, commonly used to integrate APIs, hardware, and online services.
+    
+-   **[MPI](./mpi)**  
+    The Message Passing Interface, a standard for parallel programming in distributed-memory systems.
+    
+-   **[IoT (Contiki)](./iot)**  
+    An open-source operating system for the Internet of Things, optimized for resource-constrained devices and wireless communication.
+    
+
+## Repository Structure
+
+The repository is organized into subfolders, each dedicated to a specific technology. Inside each folder, you will find:
+
+-   **Evaluation Labs**: These labs were graded and contributed to the final course score.
+    
+-   **Exercise Labs**: Labs where exercises were assigned to explore and implement key concepts hands-on.
+    
+
+## Team Members
+
+-   [**Alessandro Mosconi**](https://github.com/Alessandro-Mosconi)
+    
+-   [**Luca Lain**](https://github.com/lucalain)
+    
+-   [**Martino Piaggi**](https://github.com/martinopiaggi)
 
